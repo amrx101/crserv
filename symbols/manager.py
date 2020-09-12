@@ -1,6 +1,8 @@
 import json
 import requests
 
+from symbols.model import Symbol
+
 
 class SymbolManager(object):
     def __init__(self, file_path):
@@ -8,7 +10,13 @@ class SymbolManager(object):
         self.symbols = list()
         self.full_names = dict()
         self.cache = dict()
+        self.init()
+        print self.cache
+
+    def init(self):
         self.gather_symbols()
+        self.gather_full_name()
+        self.create_symbols()
 
     def gather_symbols(self):
         symbols = requests.get("https://api.hitbtc.com/api/2/public/symbol")
@@ -16,27 +24,22 @@ class SymbolManager(object):
             raise Exception("Unable to get symbols from server")
 
         symbols = symbols.json()
-        base_currency = dict()
+        currencies = dict()
         valids = set()
         for symbol in symbols:
             valids.add(symbol["id"])
-            base_currency[symbol["id"]] = symbol["baseCurrency"]
+            currencies[symbol["id"]] = (symbol["baseCurrency"], symbol["feeCurrency"])
         _symbols = list()
         with open(self.file_path) as f:
             _symbols = json.load(f)
         for symbol in _symbols:
             if symbol["symbol"] in valids:
-                print symbol
-                self.symbols.append(symbol)
+                id = symbol["symbol"]
+                self.symbols.append((id, currencies[id]))
             else:
                 print("Not a valid symbol")
 
         self.gather_full_name()
-        print self.symbols
-        print self.full_names
-
-    def validate_symbols(self):
-        pass
 
     def gather_full_name(self):
         currencies = requests.get("https://api.hitbtc.com/api/2/public/currency")
@@ -46,8 +49,24 @@ class SymbolManager(object):
         for curr in currencies:
             self.full_names[curr["id"]] = curr["fullName"]
 
+    def create_symbols(self):
+        print self.symbols
+        for sym, currency in self.symbols:
+            id, fee_currency = currency
+            full_name = self.full_names.get(id)
+            symbol = Symbol(sym, id, fee_currency, full_name)
+            self.cache[symbol.symbol] = symbol
+
     def get(self, symbol):
-        pass
+        if symbol not in self.cache:
+            return None
+        return json.dump(self.cache.get(symbol).to_dict())
 
     def list(self):
+        all_curr = []
+        for v in self.cache.values():
+            all_curr.append(v.to_dict())
+        return all_curr
+
+    def update(self, message):
         pass
