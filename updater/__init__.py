@@ -37,6 +37,7 @@ class Receiver(threading.Thread):
 
     def on_error(self, error):
         print(error)
+        self._run()
 
     def on_open(self):
         messages = self.create_message()
