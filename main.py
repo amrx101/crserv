@@ -52,8 +52,11 @@ if __name__ == "__main__":
     s = SymbolManager("/Users/amit/crserv/symbols.json")
     r = Receiver(s)
     r.start()
-    # print "comes here"
     app = make_app(s)
     app.listen(5000)
-    tornado.ioloop.IOLoop.current().start()
-    # r.join()
+    try:
+        tornado.ioloop.IOLoop.instance().start()
+    except (Exception, KeyboardInterrupt, SystemExit):
+        r.stop()
+        r.join()
+        tornado.ioloop.IOLoop.instance().stop()

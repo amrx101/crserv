@@ -72,3 +72,6 @@ class Receiver(threading.Thread):
             self.ws.send(symbol)
         except Exception as e:
             print("error while subsribing for symbol={}".format(e.message))
+
+    def stop(self):
+        self.ws.close()
