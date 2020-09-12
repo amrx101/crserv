@@ -76,7 +76,7 @@ GET `/currency/BTCUSD`
 ```
 
 ### HealthCheck
-The status of server can be queried at `http://127.0.0.1:<port>/healthcheck`
+The status of server can be queried at `http://<addr>:<port>/healthcheck`
 
 A 200 OK response means server is up and functioning.
 
@@ -115,6 +115,7 @@ The default locations of the configs are `/etc/symbols.json` and `/etc/configs.j
 
 ### Todos
 
+ - TLS for server verification
  - Dockerize the application
  - Kubernetes depolyment donfig
  - Unit Tests
