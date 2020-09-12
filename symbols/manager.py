@@ -20,7 +20,7 @@ class SymbolManager(object):
     def gather_symbols(self):
         symbols = requests.get("https://api.hitbtc.com/api/2/public/symbol")
         if symbols.status_code != 200:
-            raise Exception("Unable to get symbols from server")
+            raise Exception("Unable to get symbols from server={}".format(symbols.status_code))
 
         symbols = symbols.json()
         currencies = dict()
@@ -43,7 +43,7 @@ class SymbolManager(object):
     def gather_full_name(self):
         currencies = requests.get("https://api.hitbtc.com/api/2/public/currency")
         if currencies.status_code != 200:
-            raise Exception("Unable to gather currency info={}", currencies.status_code)
+            raise Exception("Unable to gather currency info={}".format(currencies.status_code))
         currencies = currencies.json()
         for curr in currencies:
             self.full_names[curr["id"]] = curr["fullName"]
