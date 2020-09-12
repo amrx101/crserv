@@ -17,20 +17,21 @@ log.setLevel("DEBUG")
 
 class SymbolManager(object):
     def __init__(self, file_path, symbol_url, currency_url):
+        log.debug("Initializing Symbol Manager.")
         self.file_path = file_path
         self._symbol_url = symbol_url
         self._currency_url = currency_url
         self.symbols = list()
         self.full_names = dict()
         self.cache = dict()
-        self.init()
+        log.debug("Successfully initialized SymbolManager.")
 
-    def init(self):
-        log.debug("Initializing Symbol Manager service.")
+    def start(self):
+        log.debug("Starting SymbolManager Service.")
         self.gather_symbols()
         self.gather_full_name()
         self.create_symbols()
-        log.debug("Successfully initialized Symbol Manager")
+        log.debug("Successfully started SymbolManager Service.")
 
     def gather_symbols(self):
         symbols = requests.get(self._symbol_url)
