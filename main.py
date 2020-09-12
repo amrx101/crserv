@@ -5,6 +5,7 @@ from symbols import SymbolManager
 import tornado.ioloop
 import tornado.web
 import json
+import time
 
 
 class JSONRequestHandler(tornado.web.RequestHandler):
@@ -40,22 +41,41 @@ class JSONRequestHandler(tornado.web.RequestHandler):
         self.write_json(kwargs)
 
 
-def make_app(symbol_manager):
-    return tornado.web.Application([
-        (r"/currency/[a-zA-Z]+$", JSONRequestHandler, dict(symbol_manager=symbol_manager)),
-    ])
+class Application(object):
+    def __init__(self):
+        self._symbol_manager = None
+        self._poller = None
+        self._initialize_services()
+
+    def start(self):
+        self.start_services()
+
+    def stop(self):
+        pass
+
+    def _make_app(self):
+        return tornado.web.Application([
+            (r"/currency/[a-zA-Z0-9]+$", JSONRequestHandler, dict(symbol_manager=self._symbol_manager)),
+        ])
+
+    def _initialize_services(self):
+        self._symbol_manager = SymbolManager("/Users/amit/crserv/symbols.json")
+        self._poller = Receiver(self._symbol_manager)
+        self._app = self._make_app()
+        self._app.listen(5000)
+
+    def start_services(self):
+        self._poller.start()
+        time.sleep(5)
+        try:
+            tornado.ioloop.IOLoop.instance().start()
+        except (Exception, KeyboardInterrupt, SystemExit):
+            self._poller.stop()
+            self._poller.join()
+            tornado.ioloop.IOLoop.instance().stop()
 
 
 if __name__ == "__main__":
-    symbols = ["BTCUSD", "ETHBTC"]
-    s = SymbolManager("/Users/amit/crserv/symbols.json")
-    r = Receiver(s)
-    r.start()
-    app = make_app(s)
-    app.listen(5000)
-    try:
-        tornado.ioloop.IOLoop.instance().start()
-    except (Exception, KeyboardInterrupt, SystemExit):
-        r.stop()
-        r.join()
-        tornado.ioloop.IOLoop.instance().stop()
+    app = Application()
+    app.start()
+
