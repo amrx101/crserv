@@ -9,3 +9,4 @@ if __name__ == "__main__":
     s = SymbolManager("/Users/amit/crserv/symbols.json")
     r = Receiver(s)
     r.start()
+    r.join()

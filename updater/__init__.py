@@ -2,6 +2,7 @@ import websocket
 import ssl
 import json
 import time
+import threading
 '''
 wscat -c wss://api.hitbtc.com/api/2/ws
 
@@ -15,8 +16,9 @@ wscat -c wss://api.hitbtc.com/api/2/ws
 '''
 
 
-class Receiver(object):
+class Receiver(threading.Thread):
     def __init__(self, symbol_manager):
+        super(Receiver, self).__init__()
         self.url = "wss://api.hitbtc.com/api/2/ws"
         self.ws = websocket.WebSocketApp(
             self.url, on_message=self.on_message, on_error=self.on_error, on_close=self.on_close
@@ -31,6 +33,7 @@ class Receiver(object):
         print "connect"
 
     def on_message(self, message):
+        print message
         self.symbol_manager.update(message)
 
     def on_error(self, error):
@@ -53,12 +56,17 @@ class Receiver(object):
         message["id"] = 1
         return message
 
-    def start(self):
+    # def _start(self):
 
+    def run(self):
+        self._run()
+
+    def _run(self):
         self.ws.run_forever(sslopt={"cert_reqs": ssl.CERT_NONE})
 
-    def on_close(self, ws):
-        self.start()
+
+    def on_close(self):
+        print "close"
 
     def add_symbol(self, symbol):
         self.symbols.add(symbol)
