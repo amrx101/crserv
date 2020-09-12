@@ -24,7 +24,7 @@ virtualenv -p /usr/bin/python2.7 venv
 source venv/bin/activate
 pip install -r requirements.txt
 
-python main.py -p <port> -c <config file location> -u <url file location>
+python main.py -a <addr>-p <port> -c <config file location> -u <url file location>
 ```
 ### verify
 ```sh

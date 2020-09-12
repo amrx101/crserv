@@ -53,9 +53,10 @@ class HealthCheckHandler(JSONRequestHandler):
 
 
 class Application(object):
-    def __init__(self, port, config, url_file):
+    def __init__(self, addr, port, config, url_file):
         self._symbol_manager = None
         self._poller = None
+        self._addr = addr
         self._port = port
         self._urls = None
         self._initialize_services(config, url_file)
@@ -81,7 +82,7 @@ class Application(object):
         )
         self._poller = Receiver(self._symbol_manager, self._urls.get("notifier"))
         self._app = self._make_app()
-        self._app.listen(self._port)
+        self._app.listen(self._port, address=self._addr)
 
     def load_urls(self, url_file):
         with open(url_file, "r") as f:
@@ -98,6 +99,7 @@ class Application(object):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
+    parser.add_argument('-a', help="addr", default="127.0.0.1", dest="addr", type=str)
     parser.add_argument('-p', help="port", default=5000, dest="port", type=int)
     parser.add_argument(
         '-c', help="config_file containing symbols",
@@ -105,6 +107,6 @@ if __name__ == "__main__":
     )
     parser.add_argument("-u", help="File containing URLS", default="/etc/urls.json", dest="urls", type=str)
     args = parser.parse_args()
-    app = Application(args.port, args.config, args.urls)
+    app = Application(args.addr, args.port, args.config, args.urls)
     app.start()
 
