@@ -117,7 +117,7 @@ The default locations of the configs are `/etc/symbols.json` and `/etc/configs.j
 
  - TLS for server verification
  - Dockerize the application
- - Kubernetes depolyment donfig
+ - Kubernetes deployment config
  - Unit Tests
 
 License
