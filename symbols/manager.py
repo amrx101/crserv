@@ -69,4 +69,12 @@ class SymbolManager(object):
         return all_curr
 
     def update(self, message):
-        pass
+        msg_dict = json.loads(message)
+        if msg_dict.get("params"):
+            values = msg_dict.get("params")
+            symbol = values.get("symbol")
+            if symbol in self.cache:
+                self.cache[symbol].update(values)
+
+    def get_symbols(self):
+        return self.cache.keys()

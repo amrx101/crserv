@@ -16,21 +16,22 @@ wscat -c wss://api.hitbtc.com/api/2/ws
 
 
 class Receiver(object):
-    def __init__(self, symbols):
+    def __init__(self, symbol_manager):
         self.url = "wss://api.hitbtc.com/api/2/ws"
         self.ws = websocket.WebSocketApp(
             self.url, on_message=self.on_message, on_error=self.on_error, on_close=self.on_close
         )
         self.ws.on_open = self.on_open
         self.symbols = set()
-        for symbol in symbols:
+        for symbol in symbol_manager.get_symbols():
             self.symbols.add(symbol)
+        self.symbol_manager = symbol_manager
 
     def on_connect(self, *args, **kwargs):
         print "connect"
 
     def on_message(self, message):
-        print "---->", message
+        self.symbol_manager.update(message)
 
     def on_error(self, error):
         print(error)

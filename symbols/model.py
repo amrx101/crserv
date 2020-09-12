@@ -71,3 +71,9 @@ class Symbol(object):
             high=self.high,
             fee_currency=self.fee_currency
         )
+
+    def update(self, params):
+        for key, value in params.iteritems():
+            if hasattr(self, key):
+                print "setting"
+                setattr(self, key, value)
