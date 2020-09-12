@@ -6,6 +6,7 @@ import tornado.ioloop
 import tornado.web
 import json
 import time
+import argparse
 
 
 class JSONRequestHandler(tornado.web.RequestHandler):
@@ -42,10 +43,11 @@ class JSONRequestHandler(tornado.web.RequestHandler):
 
 
 class Application(object):
-    def __init__(self):
+    def __init__(self, port, config):
         self._symbol_manager = None
         self._poller = None
-        self._initialize_services()
+        self._port = port
+        self._initialize_services(config)
 
     def start(self):
         self.start_services()
@@ -60,11 +62,11 @@ class Application(object):
             (r"/currency/[a-zA-Z0-9]+$", JSONRequestHandler, dict(symbol_manager=self._symbol_manager)),
         ])
 
-    def _initialize_services(self):
-        self._symbol_manager = SymbolManager("/Users/amit/crserv/symbols.json")
+    def _initialize_services(self, config):
+        self._symbol_manager = SymbolManager(config)
         self._poller = Receiver(self._symbol_manager)
         self._app = self._make_app()
-        self._app.listen(5000)
+        self._app.listen(self._port)
 
     def start_services(self):
         self._poller.start()
@@ -76,6 +78,13 @@ class Application(object):
 
 
 if __name__ == "__main__":
-    app = Application()
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-p', help="port", default=5000, dest="port", type=int)
+    parser.add_argument(
+        '-c', help="config_file containing symbols",
+        default="/etc/symbols.json", dest="config", type=str
+    )
+    args = parser.parse_args()
+    app = Application(args.port, args.config)
     app.start()
 
