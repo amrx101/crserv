@@ -3,17 +3,17 @@ import ssl
 import json
 import time
 import threading
-'''
-wscat -c wss://api.hitbtc.com/api/2/ws
+import logging
+import sys
 
-{
-  "method": "subscribeTicker",
-  "params": {
-    "symbol": "ETHBTC"
-  },
-  "id": 123
-}
-'''
+
+logFormatter = logging.Formatter("%(asctime)s [%(threadName)-12.12s] [%(levelname)-5.5s]  %(message)s")
+log = logging.getLogger(__name__)
+
+consoleHandler = logging.StreamHandler(sys.stdout)
+consoleHandler.setFormatter(logFormatter)
+log.addHandler(consoleHandler)
+log.setLevel("DEBUG")
 
 
 class Receiver(threading.Thread):
@@ -30,13 +30,13 @@ class Receiver(threading.Thread):
         self.symbol_manager = symbol_manager
 
     def on_connect(self, *args, **kwargs):
-        print "connect"
+        log.debug("Establish connection to server")
 
     def on_message(self, message):
         self.symbol_manager.update(message)
 
     def on_error(self, error):
-        print(error)
+        log.error("Error ={}, will attemp rerun".format(error))
         self._run()
 
     def on_open(self):
@@ -46,9 +46,9 @@ class Receiver(threading.Thread):
                 params = dict(symbol=pair)
                 messages["params"] = params
                 self.ws.send(json.dumps(messages))
-                time.sleep(1)
+                time.sleep(0.5)
             except Exception as e:
-                print(e)
+                log.warn(e)
 
     def create_message(self):
         message = dict()
@@ -59,13 +59,14 @@ class Receiver(threading.Thread):
     # def _start(self):
 
     def run(self):
+        log.debug("Starting Receiver service.")
         self._run()
 
     def _run(self):
         self.ws.run_forever(sslopt={"cert_reqs": ssl.CERT_NONE})
 
     def on_close(self):
-        print "close"
+        log.debug("Closing the connection")
 
     def add_symbol(self, symbol):
         self.symbols.add(symbol)
@@ -75,4 +76,5 @@ class Receiver(threading.Thread):
             print("error while subscribing for symbol={}".format(e.message))
 
     def stop(self):
+        log.debug("Shutting Down Receiver service.")
         self.ws.close()

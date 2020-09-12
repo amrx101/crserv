@@ -7,7 +7,18 @@ import tornado.web
 import json
 import time
 import argparse
+import logging
+import sys
 
+
+logFormatter = logging.Formatter("%(asctime)s [%(threadName)-12.12s] [%(levelname)-5.5s]  %(message)s")
+log = logging.getLogger(__name__)
+
+
+consoleHandler = logging.StreamHandler(sys.stdout)
+consoleHandler.setFormatter(logFormatter)
+log.addHandler(consoleHandler)
+log.setLevel("DEBUG")
 
 
 class JSONRequestHandler(tornado.web.RequestHandler):
@@ -65,8 +76,10 @@ class Application(object):
         self.start_services()
 
     def stop(self):
+        log.debug("Shutting down all services")
         self._poller.stop()
         self._poller.join()
+        log.debug("All services offline.")
         tornado.ioloop.IOLoop.instance().stop()
 
     def _make_app(self):
@@ -76,6 +89,7 @@ class Application(object):
         ])
 
     def _initialize_services(self, config, url_file):
+        log.debug("Initializing services.")
         self.load_urls(url_file)
         self._symbol_manager = SymbolManager(
             config, self._urls.get("symbol"), self._urls.get("currency")
@@ -83,14 +97,17 @@ class Application(object):
         self._poller = Receiver(self._symbol_manager, self._urls.get("notifier"))
         self._app = self._make_app()
         self._app.listen(self._port, address=self._addr)
+        log.debug("Successfully initialized all services.")
 
     def load_urls(self, url_file):
         with open(url_file, "r") as f:
             self._urls = json.load(f)
 
     def start_services(self):
+        log.debug("Starting all services")
         self._poller.start()
         time.sleep(5)
+        log.debug("Server is listening at {}:{}".format(self._addr, self._port))
         try:
             tornado.ioloop.IOLoop.instance().start()
         except (Exception, KeyboardInterrupt, SystemExit):

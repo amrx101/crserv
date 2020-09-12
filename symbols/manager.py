@@ -1,7 +1,18 @@
 import json
 import requests
+import logging
+import sys
 
 from symbols.model import Symbol
+
+
+logFormatter = logging.Formatter("%(asctime)s [%(threadName)-12.12s] [%(levelname)-5.5s]  %(message)s")
+log = logging.getLogger(__name__)
+
+consoleHandler = logging.StreamHandler(sys.stdout)
+consoleHandler.setFormatter(logFormatter)
+log.addHandler(consoleHandler)
+log.setLevel("DEBUG")
 
 
 class SymbolManager(object):
@@ -15,9 +26,11 @@ class SymbolManager(object):
         self.init()
 
     def init(self):
+        log.debug("Initializing Symbol Manager service.")
         self.gather_symbols()
         self.gather_full_name()
         self.create_symbols()
+        log.debug("Successfully initialized Symbol Manager")
 
     def gather_symbols(self):
         symbols = requests.get(self._symbol_url)
@@ -38,7 +51,7 @@ class SymbolManager(object):
                 id = symbol["symbol"]
                 self.symbols.append((id, currencies[id]))
             else:
-                print("Not a valid symbol")
+               log.warn("Invalid symbol supplied={}".format(symbol))
 
         self.gather_full_name()
 
@@ -51,7 +64,6 @@ class SymbolManager(object):
             self.full_names[curr["id"]] = curr["fullName"]
 
     def create_symbols(self):
-        print self.symbols
         for sym, currency in self.symbols:
             id, fee_currency = currency
             full_name = self.full_names.get(id)
