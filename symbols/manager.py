@@ -5,8 +5,10 @@ from symbols.model import Symbol
 
 
 class SymbolManager(object):
-    def __init__(self, file_path):
+    def __init__(self, file_path, symbol_url, currency_url):
         self.file_path = file_path
+        self._symbol_url = symbol_url
+        self._currency_url = currency_url
         self.symbols = list()
         self.full_names = dict()
         self.cache = dict()
@@ -18,7 +20,7 @@ class SymbolManager(object):
         self.create_symbols()
 
     def gather_symbols(self):
-        symbols = requests.get("https://api.hitbtc.com/api/2/public/symbol")
+        symbols = requests.get(self._symbol_url)
         if symbols.status_code != 200:
             raise Exception("Unable to get symbols from server={}".format(symbols.status_code))
 
@@ -41,7 +43,7 @@ class SymbolManager(object):
         self.gather_full_name()
 
     def gather_full_name(self):
-        currencies = requests.get("https://api.hitbtc.com/api/2/public/currency")
+        currencies = requests.get(self._currency_url)
         if currencies.status_code != 200:
             raise Exception("Unable to gather currency info={}".format(currencies.status_code))
         currencies = currencies.json()

@@ -17,9 +17,9 @@ wscat -c wss://api.hitbtc.com/api/2/ws
 
 
 class Receiver(threading.Thread):
-    def __init__(self, symbol_manager):
+    def __init__(self, symbol_manager, url):
         super(Receiver, self).__init__()
-        self.url = "wss://api.hitbtc.com/api/2/ws"
+        self.url = url
         self.ws = websocket.WebSocketApp(
             self.url, on_message=self.on_message, on_error=self.on_error, on_close=self.on_close
         )
@@ -72,7 +72,7 @@ class Receiver(threading.Thread):
         try:
             self.ws.send(symbol)
         except Exception as e:
-            print("error while subsribing for symbol={}".format(e.message))
+            print("error while subscribing for symbol={}".format(e.message))
 
     def stop(self):
         self.ws.close()

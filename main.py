@@ -43,11 +43,12 @@ class JSONRequestHandler(tornado.web.RequestHandler):
 
 
 class Application(object):
-    def __init__(self, port, config):
+    def __init__(self, port, config, url_file):
         self._symbol_manager = None
         self._poller = None
         self._port = port
-        self._initialize_services(config)
+        self._urls = None
+        self._initialize_services(config, url_file)
 
     def start(self):
         self.start_services()
@@ -62,11 +63,18 @@ class Application(object):
             (r"/currency/[a-zA-Z0-9]+$", JSONRequestHandler, dict(symbol_manager=self._symbol_manager)),
         ])
 
-    def _initialize_services(self, config):
-        self._symbol_manager = SymbolManager(config)
-        self._poller = Receiver(self._symbol_manager)
+    def _initialize_services(self, config, url_file):
+        self.load_urls(url_file)
+        self._symbol_manager = SymbolManager(
+            config, self._urls.get("symbol"), self._urls.get("currency")
+        )
+        self._poller = Receiver(self._symbol_manager, self._urls.get("notifier"))
         self._app = self._make_app()
         self._app.listen(self._port)
+
+    def load_urls(self, url_file):
+        with open(url_file, "r") as f:
+            self._urls = json.load(f)
 
     def start_services(self):
         self._poller.start()
@@ -84,7 +92,8 @@ if __name__ == "__main__":
         '-c', help="config_file containing symbols",
         default="/etc/symbols.json", dest="config", type=str
     )
+    parser.add_argument("-u", help="File containing URLS", default="/etc/urls.json", dest="urls", type=str)
     args = parser.parse_args()
-    app = Application(args.port, args.config)
+    app = Application(args.port, args.config, args.urls)
     app.start()
 
