@@ -11,7 +11,6 @@ class SymbolManager(object):
         self.full_names = dict()
         self.cache = dict()
         self.init()
-        print self.cache
 
     def init(self):
         self.gather_symbols()
