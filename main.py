@@ -47,7 +47,6 @@ def make_app(symbol_manager):
 
 
 if __name__ == "__main__":
-    print "Hello"
     symbols = ["BTCUSD", "ETHBTC"]
     s = SymbolManager("/Users/amit/crserv/symbols.json")
     r = Receiver(s)
