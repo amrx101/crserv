@@ -51,7 +51,9 @@ class Application(object):
         self.start_services()
 
     def stop(self):
-        pass
+        self._poller.stop()
+        self._poller.join()
+        tornado.ioloop.IOLoop.instance().stop()
 
     def _make_app(self):
         return tornado.web.Application([
@@ -70,9 +72,7 @@ class Application(object):
         try:
             tornado.ioloop.IOLoop.instance().start()
         except (Exception, KeyboardInterrupt, SystemExit):
-            self._poller.stop()
-            self._poller.join()
-            tornado.ioloop.IOLoop.instance().stop()
+            self.stop()
 
 
 if __name__ == "__main__":
