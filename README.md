@@ -101,6 +101,11 @@ Config 2:
 }
 ```
 
+### Dependencies:
+- `websocket_client`: Required because we need a Web Socket client to get notified by the server.
+- `requests`: Simple HTTP library because we need to query the server to validate symbols and get meta info about them.
+- `tornado`: We need a web-server to server our clients.
+
 The default locations of the configs are `/etc/symbols.json` and `/etc/configs.json`. Reference config files are present in the `config` directory.
 
 ### Todos
