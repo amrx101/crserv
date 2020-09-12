@@ -18,6 +18,7 @@ log.setLevel("DEBUG")
 
 class Receiver(threading.Thread):
     def __init__(self, symbol_manager, url):
+        log.debug("Initializing Poller service.")
         super(Receiver, self).__init__()
         self.url = url
         self.ws = websocket.WebSocketApp(
@@ -28,6 +29,7 @@ class Receiver(threading.Thread):
         for symbol in symbol_manager.get_symbols():
             self.symbols.add(symbol)
         self.symbol_manager = symbol_manager
+        log.debug("Successfully initialized Poller Service.")
 
     def on_connect(self, *args, **kwargs):
         log.debug("Establish connection to server")
