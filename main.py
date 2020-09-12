@@ -27,6 +27,7 @@ class JSONRequestHandler(tornado.web.RequestHandler):
 
     def get(self):
         symbol = self.request.uri.split("/")[2]
+        log.info("Received GET request for symbol={}".format(symbol))
         if symbol == "all":
             items = self.symbol_manager.list()
             self.write_json(items)

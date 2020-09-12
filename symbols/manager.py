@@ -72,6 +72,7 @@ class SymbolManager(object):
 
     def get(self, symbol):
         if symbol not in self.cache:
+            log.info("No entry for symbol={}".format(symbol))
             return None
         return self.cache.get(symbol).to_dict()
 
