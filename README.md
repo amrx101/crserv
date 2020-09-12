@@ -28,7 +28,7 @@ python main.py -a <addr>-p <port> -c <config file location> -u <url file locatio
 ```
 ### verify
 ```sh
-<addr>:<port>/currency/all
+<addr>:<port>/healthcheck
 ```
 
 ### API
