@@ -5,7 +5,7 @@ Crserv is a minimal microservice that provides realtime values of crptocurrencie
 # Features!
 
   - Retrieve real time values for crypto currencies.
-  - Config symbols for desired crypto currencies.
+  - Config symbols for desired crypto currencies and retrieval urls.
 
 ### Installation
 Requires Python 2.7
