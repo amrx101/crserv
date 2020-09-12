@@ -73,7 +73,7 @@ class Receiver(threading.Thread):
         try:
             self.ws.send(symbol)
         except Exception as e:
-            print("error while subscribing for symbol={}".format(e.message))
+            log.error("error while subscribing for symbol={}".format(e.message))
 
     def stop(self):
         log.debug("Shutting Down Receiver service.")
