@@ -75,6 +75,11 @@ GET `/currency/BTCUSD`
     }
 ```
 
+### HealthCheck
+The status of server can be queried at `http://127.0.0.1:<port>/healthcheck`
+
+A 200 OK response means server is up and functioning.
+
 ### Configs
 The application requires 2 configs file to function, supplied as command line arguments.
 Config 1: 

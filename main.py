@@ -9,6 +9,7 @@ import time
 import argparse
 
 
+
 class JSONRequestHandler(tornado.web.RequestHandler):
     def initialize(self, symbol_manager):
         self.symbol_manager = symbol_manager
@@ -42,6 +43,15 @@ class JSONRequestHandler(tornado.web.RequestHandler):
         self.write_json(kwargs)
 
 
+class HealthCheckHandler(JSONRequestHandler):
+    def initialize(self):
+        pass
+
+    def get(self, *args, **kwargs):
+        value = dict(message="AllOk")
+        self.write_json(value)
+
+
 class Application(object):
     def __init__(self, port, config, url_file):
         self._symbol_manager = None
@@ -61,6 +71,7 @@ class Application(object):
     def _make_app(self):
         return tornado.web.Application([
             (r"/currency/[a-zA-Z0-9]+$", JSONRequestHandler, dict(symbol_manager=self._symbol_manager)),
+            (r"/healthcheck", HealthCheckHandler)
         ])
 
     def _initialize_services(self, config, url_file):
