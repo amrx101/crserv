@@ -75,5 +75,4 @@ class Symbol(object):
     def update(self, params):
         for key, value in params.iteritems():
             if hasattr(self, key):
-                print "setting"
                 setattr(self, key, value)
