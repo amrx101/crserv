@@ -33,7 +33,6 @@ class Receiver(threading.Thread):
         print "connect"
 
     def on_message(self, message):
-        print message
         self.symbol_manager.update(message)
 
     def on_error(self, error):
@@ -63,7 +62,6 @@ class Receiver(threading.Thread):
 
     def _run(self):
         self.ws.run_forever(sslopt={"cert_reqs": ssl.CERT_NONE})
-
 
     def on_close(self):
         print "close"

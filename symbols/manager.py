@@ -59,7 +59,7 @@ class SymbolManager(object):
     def get(self, symbol):
         if symbol not in self.cache:
             return None
-        return json.dump(self.cache.get(symbol).to_dict())
+        return self.cache.get(symbol).to_dict()
 
     def list(self):
         all_curr = []

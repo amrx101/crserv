@@ -13,7 +13,7 @@ class Symbol(object):
 
     @property
     def ask(self):
-        return self.ask
+        return self._ask
 
     @ask.setter
     def ask(self, ask):
@@ -69,7 +69,7 @@ class Symbol(object):
             open=self.open,
             low=self.low,
             high=self.high,
-            fee_currency=self.fee_currency
+            feeCurrency=self.fee_currency
         )
 
     def update(self, params):
