@@ -25,6 +25,7 @@ class SymbolManager(object):
         self.full_names = dict()
         self.cache = dict()
         log.debug("Successfully initialized SymbolManager.")
+        self.start()
 
     def start(self):
         log.debug("Starting SymbolManager Service.")

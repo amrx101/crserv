@@ -106,7 +106,6 @@ class Application(object):
 
     def start_services(self):
         log.debug("Starting all services")
-        self._symbol_manager.start()
         self._poller.start()
         # Lets give poller some time so we already have some data cached to server.
         time.sleep(5)
