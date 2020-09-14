@@ -1,6 +1,6 @@
 # Crserv
 
-Crserv is a minimal microservice that provides realtime values of crptocurrencies.
+Crserv is a minimal microservice that provides realtime values of crypto-currencies.
 
 # Features!
 
@@ -8,7 +8,17 @@ Crserv is a minimal microservice that provides realtime values of crptocurrencie
   - Config symbols for desired crypto currencies and retrieval urls.
 
 ### Installation
-Requires Python 2.7
+Requires Python 2.7 & pip
+
+Optional(Install pip)
+
+```shell script
+curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+sudo python get-pip.py
+pip install virtualenv
+sudo /usr/bin/easy_install virtualen
+```
+
 ```sh
 pip install virtualenv
 ```
